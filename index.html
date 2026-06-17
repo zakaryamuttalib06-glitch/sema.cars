@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEMA CARS — پێشانگای سیما کارس </title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&family=Noto+Sans+Arabic:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:    #090909;
+    --deep:     #111111;
+    --card:     #161616;
+    --gold:     #C9A84C;
+    --gold-lt:  #E2C97E;
+    --gold-dk:  #8A6D28;
+    --cream:    #F5F0E8;
+    --muted:    #6B6B6B;
+    --border:   rgba(201,168,76,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem 4rem;
+    background: linear-gradient(to bottom, rgba(9,9,9,0.95), transparent);
+    backdrop-filter: blur(2px);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; font-weight: 900; letter-spacing: 0.12em;
+    color: var(--gold);
+    text-decoration: none;
+  }
+  .logo span { color: var(--cream); font-weight: 400; font-style: italic; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--cream); text-decoration: none;
+    font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+    opacity: 0.75; transition: opacity 0.3s, color 0.3s;
+  }
+  .nav-links a:hover { opacity: 1; color: var(--gold); }
+  .nav-cta {
+    padding: 0.55rem 1.6rem;
+    border: 1px solid var(--gold);
+    color: var(--gold); background: transparent;
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+    font-family: 'Inter', sans-serif;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--black); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 4rem; overflow: hidden;
+  }
+  #hero-canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.4rem; opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 1.0; font-weight: 900;
+    color: var(--cream); max-width: 11ch;
+    opacity: 0; animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--gold);
+    display: block;
+  }
+  .hero-sub {
+    margin-top: 1.8rem;
+    font-size: 1rem; color: var(--muted); font-weight: 300;
+    max-width: 38ch; line-height: 1.7;
+    opacity: 0; animation: fadeUp 0.9s 0.7s forwards;
+  }
+  .hero-actions {
+    margin-top: 2.8rem; display: flex; gap: 1.2rem; align-items: center;
+    opacity: 0; animation: fadeUp 0.9s 0.9s forwards;
+  }
+  .btn-primary {
+    padding: 0.85rem 2.4rem;
+    background: var(--gold);
+    color: var(--black); border: none;
+    font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 600; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-lt); transform: translateY(-1px); }
+  .btn-ghost {
+    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--cream); background: none; border: none; cursor: pointer;
+    opacity: 0.6; font-family: 'Inter', sans-serif;
+    display: flex; align-items: center; gap: 0.5rem;
+    transition: opacity 0.3s;
+  }
+  .btn-ghost:hover { opacity: 1; }
+  .arrow-right { font-size: 1.1rem; }
+
+  /* hero car silhouette */
+  .hero-car {
+    position: absolute; right: -2%; bottom: 8%;
+    width: 58%; max-width: 900px;
+    opacity: 0; animation: carSlide 1.2s 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+    filter: drop-shadow(0 0 60px rgba(201,168,76,0.18));
+  }
+  .hero-line {
+    position: absolute; bottom: 0; left: 4rem; right: 4rem;
+    height: 1px; background: var(--border);
+  }
+  .hero-stat-bar {
+    position: absolute; bottom: 2.5rem; left: 4rem;
+    display: flex; gap: 3rem;
+    opacity: 0; animation: fadeUp 0.9s 1.1s forwards;
+  }
+  .stat { text-align: left; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700; color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-top: 0.2rem;
+  }
+
+  /* ─── MARQUEE ─── */
+  .marquee-wrap {
+    overflow: hidden; border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 0; background: var(--deep);
+  }
+  .marquee-track {
+    display: flex; gap: 4rem; width: max-content;
+    animation: marquee 22s linear infinite;
+  }
+  .marquee-item {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85rem; font-style: italic;
+    color: var(--gold-dk); letter-spacing: 0.1em; white-space: nowrap;
+  }
+  .marquee-dot { color: var(--gold); }
+
+  /* ─── FLEET ─── */
+  .fleet {
+    padding: 7rem 4rem;
+  }
+  .section-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 4rem;
+    border-bottom: 1px solid var(--border); padding-bottom: 2rem;
+  }
+  .section-eyebrow {
+    font-size: 0.68rem; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.7rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+  }
+  .section-link {
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); text-decoration: none; opacity: 0.8;
+    transition: opacity 0.3s;
+  }
+  .section-link:hover { opacity: 1; }
+
+  .cars-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+    background: var(--border);
+  }
+  .car-card {
+    background: var(--card);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+  }
+  .car-card:first-child {
+    grid-column: span 2; grid-row: span 1;
+  }
+  .car-img {
+    width: 100%; aspect-ratio: 16/9;
+    background: var(--deep);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .car-card:first-child .car-img { aspect-ratio: 21/9; }
+  .car-svg { width: 80%; transition: transform 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .car-card:hover .car-svg { transform: scale(1.04) translateX(-1%); }
+  .car-glow {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 70%; height: 30px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.25) 0%, transparent 70%);
+    transition: opacity 0.4s;
+  }
+  .car-info { padding: 1.6rem 2rem; }
+  .car-brand {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.3rem;
+  }
+  .car-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+  }
+  .car-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1rem;
+  }
+  .car-price {
+    font-size: 1.1rem; font-weight: 600; color: var(--gold);
+    font-family: 'Playfair Display', serif;
+  }
+  .car-specs {
+    display: flex; gap: 1.2rem;
+  }
+  .car-spec {
+    font-size: 0.68rem; color: var(--muted); letter-spacing: 0.05em;
+  }
+  .car-spec strong { color: var(--cream); display: block; font-size: 0.8rem; }
+
+  /* ─── EXPERIENCE ─── */
+  .experience {
+    padding: 7rem 4rem;
+    background: var(--deep);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+    align-items: center;
+  }
+  .exp-visual {
+    position: relative;
+  }
+  .exp-frame {
+    width: 100%; aspect-ratio: 4/5;
+    background: var(--card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden; position: relative;
+  }
+  .exp-inner-frame {
+    position: absolute; inset: 1.5rem;
+    border: 1px solid rgba(201,168,76,0.1);
+  }
+  .exp-badge {
+    position: absolute; bottom: -1.5rem; right: -1.5rem;
+    width: 9rem; height: 9rem;
+    background: var(--gold);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--black);
+  }
+  .badge-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem; font-weight: 900; line-height: 1;
+  }
+  .badge-txt {
+    font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+    font-weight: 600; margin-top: 0.2rem; text-align: center;
+  }
+  .exp-content {}
+  .exp-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; line-height: 1.4; font-style: italic;
+    color: var(--cream); margin: 1.5rem 0;
+  }
+  .exp-quote::before { content: '\201C'; color: var(--gold); }
+  .exp-quote::after  { content: '\201D'; color: var(--gold); }
+  .exp-body {
+    font-size: 0.9rem; line-height: 1.8; color: var(--muted);
+  }
+  .exp-features {
+    margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1rem;
+  }
+  .exp-feat {
+    display: flex; align-items: flex-start; gap: 1rem;
+    padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+  }
+  .feat-icon {
+    width: 2rem; height: 2rem; flex-shrink: 0;
+    border: 1px solid var(--gold); color: var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem;
+  }
+  .feat-title { font-size: 0.82rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .feat-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ─── PROCESS ─── */
+  .process {
+    padding: 7rem 4rem;
+    background: var(--black);
+  }
+  .steps {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1px; background: var(--border);
+    margin-top: 4rem;
+  }
+  .step {
+    background: var(--black);
+    padding: 3rem 2.5rem;
+    position: relative;
+  }
+  .step::after {
+    content: '';
+    position: absolute; top: 3rem; right: 0;
+    width: 1px; height: 2rem; background: var(--gold);
+  }
+  .step:last-child::after { display: none; }
+  .step-roman {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem; color: var(--gold); letter-spacing: 0.2em;
+    margin-bottom: 1.5rem; display: block;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 0.7rem;
+  }
+  .step-desc {
+    font-size: 0.78rem; line-height: 1.7; color: var(--muted);
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials {
+    padding: 7rem 4rem; background: var(--deep);
+  }
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1.5px; background: var(--border); margin-top: 4rem;
+  }
+  .testi {
+    background: var(--card); padding: 2.5rem;
+  }
+  .testi-stars { color: var(--gold); font-size: 0.8rem; margin-bottom: 1rem; }
+  .testi-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; line-height: 1.6; font-style: italic;
+    margin-bottom: 1.5rem;
+  }
+  .testi-author {
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold);
+  }
+  .testi-role { color: var(--muted); margin-top: 0.15rem; font-size: 0.7rem; }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    padding: 8rem 4rem;
+    background: var(--black);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .cta-bg-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-family: 'Playfair Display', serif;
+    font-size: 18vw; font-weight: 900; font-style: italic;
+    color: rgba(201,168,76,0.03); white-space: nowrap; pointer-events: none;
+    user-select: none;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 700;
+    margin-bottom: 1.2rem; position: relative;
+  }
+  .cta-title em { color: var(--gold); font-style: italic; }
+  .cta-sub {
+    font-size: 0.95rem; color: var(--muted);
+    margin-bottom: 3rem; position: relative;
+  }
+  .cta-form {
+    display: flex; gap: 0; max-width: 480px; margin: 0 auto;
+    position: relative;
+  }
+  .cta-input {
+    flex: 1; padding: 1rem 1.5rem;
+    background: var(--card); border: 1px solid var(--border);
+    border-right: none;
+    color: var(--cream); font-family: 'Inter', sans-serif; font-size: 0.85rem;
+    outline: none;
+  }
+  .cta-input::placeholder { color: var(--muted); }
+  .cta-input:focus { border-color: var(--gold); }
+  .cta-btn {
+    padding: 1rem 1.8rem;
+    background: var(--gold); border: none;
+    color: var(--black); font-size: 0.75rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif;
+    transition: background 0.3s;
+  }
+  .cta-btn:hover { background: var(--gold-lt); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--deep);
+    border-top: 1px solid var(--border);
+    padding: 4rem;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 4rem;
+  }
+  .footer-brand .logo { font-size: 1.3rem; }
+  .footer-tagline {
+    font-size: 0.78rem; color: var(--muted);
+    line-height: 1.6; margin-top: 1rem; max-width: 22ch;
+  }
+  .footer-heading {
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 1.2rem;
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-links a {
+    font-size: 0.78rem; color: var(--muted); text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.68rem; color: var(--muted);
+    display: flex; justify-content: space-between;
+    grid-column: span 4;
+  }
+
+  /* ─── CAR SVGs ─── */
+  .sport-car-svg { fill: none; }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes carSlide {
+    from { opacity: 0; transform: translateX(6%); }
+    to   { opacity: 0.9; transform: translateX(0); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">AURUM <span>Motors</span></a>
+  <ul class="nav-links">
+    <li><a href="#fleet">فلیت</a></li>
+    <li><a href="#experience">تەجربە</a></li>
+    <li><a href="#process">پرۆسە</a></li>
+    <li><a href="#contact">پەیوەندی</a></li>
+  </ul>
+  <button class="nav-cta">کات داواکە</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-eyebrow">پێشانگای ئۆتۆمبێلی لوکس — بنیاتنرا لە ٢٠٠٨</div>
+  <h1 class="hero-title">
+    دەرگای
+    <em>هەمیشەیی</em>
+    بۆ کەمالی
+  </h1>
+  <p class="hero-sub">
+    ئۆتۆمبێلی لوکس تەنها ئامێر نییە — ئیفادەی کەسایەتیتە. ئێمە باشترینیان بۆت هەڵدەبژێرین.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('fleet').scrollIntoView({behavior:'smooth'})">کۆلێکشنەکە ببینە</button>
+    <button class="btn-ghost">زیاتر بزانە <span class="arrow-right">→</span></button>
+  </div>
+
+  <!-- SVG Car silhouette -->
+  <div class="hero-car">
+    <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" class="sport-car-svg">
+      <defs>
+        <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#2A2A2A"/>
+          <stop offset="100%" style="stop-color:#111111"/>
+        </linearGradient>
+        <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#8A6D28"/>
+          <stop offset="50%" style="stop-color:#C9A84C"/>
+          <stop offset="100%" style="stop-color:#8A6D28"/>
+        </linearGradient>
+        <radialGradient id="glowGrad" cx="50%" cy="100%" r="50%">
+          <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:0.3"/>
+          <stop offset="100%" style="stop-color:#C9A84C;stop-opacity:0"/>
+        </radialGradient>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.6"/>
+        </filter>
+      </defs>
+      <!-- Ground glow -->
+      <ellipse cx="450" cy="290" rx="380" ry="30" fill="url(#glowGrad)" opacity="0.5"/>
+      <!-- Main body -->
+      <path d="M80,230 L80,200 Q85,195 100,188 L200,165 Q280,110 370,95 L530,90 Q620,90 680,108 L780,140 Q820,158 830,175 L840,195 L840,230 Z"
+            fill="url(#bodyGrad)" filter="url(#shadow)"/>
+      <!-- Roof/cabin -->
+      <path d="M270,165 Q320,100 390,82 L540,78 Q610,78 660,98 L730,140 L270,140 Z"
+            fill="#1E1E1E"/>
+      <!-- Windshield -->
+      <path d="M380,85 Q430,70 530,72 L620,100 L540,138 L330,138 Z"
+            fill="rgba(150,200,255,0.06)" stroke="rgba(201,168,76,0.25)" stroke-width="1"/>
+      <!-- Rear window -->
+      <path d="M660,100 L730,140 L680,140 L640,108 Z"
+            fill="rgba(150,200,255,0.05)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+      <!-- Gold side stripe -->
+      <path d="M110,210 L820,210" stroke="url(#goldAccent)" stroke-width="2.5" opacity="0.7"/>
+      <!-- Headlight left -->
+      <ellipse cx="835" cy="175" rx="10" ry="14" fill="#C9A84C" opacity="0.9"/>
+      <ellipse cx="835" cy="175" rx="6" ry="10" fill="#FFE9A0"/>
+      <line x1="835" y1="175" x2="880" y2="168" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+      <!-- Taillight right -->
+      <rect x="82" y="185" width="18" height="20" rx="2" fill="#C9A84C" opacity="0.6"/>
+      <!-- Wheel arch left -->
+      <path d="M620,230 Q680,205 740,230" fill="none" stroke="#333" stroke-width="2"/>
+      <!-- Wheel arch right -->
+      <path d="M160,230 Q220,205 280,230" fill="none" stroke="#333" stroke-width="2"/>
+      <!-- Wheel Left -->
+      <circle cx="700" cy="252" r="44" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="3"/>
+      <circle cx="700" cy="252" r="32" fill="none" stroke="#1E1E1E" stroke-width="8"/>
+      <circle cx="700" cy="252" r="18" fill="#151515" stroke="#C9A84C" stroke-width="1.5"/>
+      <!-- Spokes left -->
+      <line x1="700" y1="220" x2="700" y2="284" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+      <line x1="668" y1="252" x2="732" y2="252" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+      <line x1="677" y1="229" x2="723" y2="275" stroke="#C9A84C" stroke-width="1" opacity="0.5"/>
+      <line x1="723" y1="229" x2="677" y2="275" stroke="#C9A84C" stroke-width="1" opacity="0.5"/>
+      <!-- Wheel Right -->
+      <circle cx="215" cy="252" r="44" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="3"/>
+      <circle cx="215" cy="252" r="32" fill="none" stroke="#1E1E1E" stroke-width="8"/>
+      <circle cx="215" cy="252" r="18" fill="#151515" stroke="#C9A84C" stroke-width="1.5"/>
+      <!-- Spokes right -->
+      <line x1="215" y1="220" x2="215" y2="284" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+      <line x1="183" y1="252" x2="247" y2="252" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+      <line x1="192" y1="229" x2="238" y2="275" stroke="#C9A84C" stroke-width="1" opacity="0.5"/>
+      <line x1="238" y1="229" x2="192" y2="275" stroke="#C9A84C" stroke-width="1" opacity="0.5"/>
+      <!-- Bumper details -->
+      <path d="M80,200 Q70,210 68,230" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <path d="M840,195 Q850,205 852,230" stroke="#C9A84C" stroke-width="1.5" fill="none" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="hero-stat-bar">
+    <div class="stat">
+      <div class="stat-num">۲۸۰+</div>
+      <div class="stat-label">ئۆتۆمبێل لە ستۆک</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">١٥</div>
+      <div class="stat-label">ساڵ تەجربە</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">۴٫۹★</div>
+      <div class="stat-label">نرخدانی کڕیار</div>
+    </div>
+  </div>
+  <div class="hero-line"></div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">Lamborghini</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Ferrari</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Rolls-Royce</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bentley</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">McLaren</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Aston Martin</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Porsche</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bugatti</span><span class="marquee-dot">◆</span>
+    <!-- dup for seamless -->
+    <span class="marquee-item">Lamborghini</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Ferrari</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Rolls-Royce</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bentley</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">McLaren</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Aston Martin</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Porsche</span><span class="marquee-dot">◆</span>
+    <span class="marquee-item">Bugatti</span><span class="marquee-dot">◆</span>
+  </div>
+</div>
+
+<!-- FLEET -->
+<section class="fleet" id="fleet">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">کۆلێکشنی تازە</div>
+      <h2 class="section-title">هەڵبژاردنی سەرەکی<br>ئێمە</h2>
+    </div>
+    <a href="#" class="section-link">هەموو ئۆتۆمبێلەکان ببینە →</a>
+  </div>
+  <div class="cars-grid reveal">
+
+    <!-- Featured -->
+    <div class="car-card" onclick="alert('زانیاری Ferrari SF90 Stradale')">
+      <div class="car-img">
+        <svg viewBox="0 0 800 380" class="car-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fg1" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#3A0000"/><stop offset="100%" style="stop-color:#1A0000"/>
+            </linearGradient>
+            <radialGradient id="glow1" cx="50%" cy="100%" r="40%">
+              <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:0.4"/>
+              <stop offset="100%" style="stop-color:#C9A84C;stop-opacity:0"/>
+            </radialGradient>
+          </defs>
+          <ellipse cx="400" cy="340" rx="340" ry="28" fill="url(#glow1)"/>
+          <path d="M60,270 L60,235 Q65,228 80,220 L180,192 Q260,135 360,118 L480,112 Q580,112 640,132 L750,165 Q785,180 790,200 L795,230 L795,270 Z" fill="url(#fg1)"/>
+          <path d="M230,192 Q290,122 370,104 L490,100 Q575,100 630,120 L710,158 L230,158 Z" fill="#220000"/>
+          <path d="M348,106 Q410,88 490,90 L600,118 L520,156 L295,156 Z" fill="rgba(255,100,80,0.05)" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+          <path d="M100,248 L790,248" stroke="url(#goldAccent)" stroke-width="3" opacity="0.6"/>
+          <circle cx="670" cy="296" r="46" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="3"/>
+          <circle cx="670" cy="296" r="20" fill="#181818" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="670" y1="262" x2="670" y2="330" stroke="#C9A84C" stroke-width="1.2" opacity="0.9"/>
+          <line x1="636" y1="296" x2="704" y2="296" stroke="#C9A84C" stroke-width="1.2" opacity="0.9"/>
+          <line x1="646" y1="272" x2="694" y2="320" stroke="#C9A84C" stroke-width="1.2" opacity="0.6"/>
+          <line x1="694" y1="272" x2="646" y2="320" stroke="#C9A84C" stroke-width="1.2" opacity="0.6"/>
+          <circle cx="170" cy="296" r="46" fill="#0D0D0D" stroke="#2A2A2A" stroke-width="3"/>
+          <circle cx="170" cy="296" r="20" fill="#181818" stroke="#C9A84C" stroke-width="1.5"/>
+          <line x1="170" y1="262" x2="170" y2="330" stroke="#C9A84C" stroke-width="1.2" opacity="0.9"/>
+          <line x1="136" y1="296" x2="204" y2="296" stroke="#C9A84C" stroke-width="1.2" opacity="0.9"/>
+          <line x1="146" y1="272" x2="194" y2="320" stroke="#C9A84C" stroke-width="1.2" opacity="0.6"/>
+          <line x1="194" y1="272" x2="146" y2="320" stroke="#C9A84C" stroke-width="1.2" opacity="0.6"/>
+          <ellipse cx="790" cy="215" rx="10" ry="15" fill="#C9A84C" opacity="0.9"/>
+        </svg>
+        <div class="car-glow"></div>
+      </div>
+      <div class="car-info">
+        <div class="car-brand">Ferrari — ئیتالیا</div>
+        <div class="car-name">SF90 Stradale</div>
+        <div class="car-meta">
+          <div class="car-price">$٥٨٠,٠٠٠</div>
+          <div class="car-specs">
+            <div class="car-spec"><strong>1000 hp</strong>هێز</div>
+            <div class="car-spec"><strong>2.5 چ</strong>0-100</div>
+            <div class="car-spec"><strong>2022</strong>ساڵ</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="car-card" onclick="alert('زانیاری Rolls-Royce Ghost')">
+      <div class="car-img">
+        <svg viewBox="0 0 400 240" class="car-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="fg2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#1C1C1C"/><stop offset="100%" style="stop-color:#0A0A0A"/></linearGradient></defs>
+          <ellipse cx="200" cy="225" rx="170" ry="18" fill="url(#glowGrad)" opacity="0.5"/>
+          <path d="M30,180 L30,155 Q38,145 55,138 L100,120 Q145,82 195,72 L255,70 Q305,70 330,84 L370,100 Q390,112 393,125 L395,155 L395,180 Z" fill="url(#fg2)"/>
+          <path d="M120,120 Q158,72 200,62 L262,60 Q315,60 345,80 L380,108 L120,108 Z" fill="#181818"/>
+          <path d="M178,64 Q215,50 265,52 L335,76 L295,106 L150,106 Z" fill="rgba(150,200,255,0.04)" stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
+          <path d="M40,162 L390,162" stroke="url(#goldAccent)" stroke-width="2" opacity="0.6"/>
+          <circle cx="325" cy="198" r="30" fill="#0D0D0D" stroke="#222" stroke-width="2"/>
+          <circle cx="325" cy="198" r="13" fill="#141414" stroke="#C9A84C" stroke-width="1"/>
+          <line x1="325" y1="178" x2="325" y2="218" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+          <line x1="305" y1="198" x2="345" y2="198" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+          <circle cx="90" cy="198" r="30" fill="#0D0D0D" stroke="#222" stroke-width="2"/>
+          <circle cx="90" cy="198" r="13" fill="#141414" stroke="#C9A84C" stroke-width="1"/>
+          <line x1="90" y1="178" x2="90" y2="218" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+          <line x1="70" y1="198" x2="110" y2="198" stroke="#C9A84C" stroke-width="1" opacity="0.8"/>
+        </svg>
+        <div class="car-glow"></div>
+      </div>
+      <div class="car-info">
+        <div class="car-brand">Rolls-Royce — بریتانیا</div>
+        <div class="car-name">Ghost Black Badge</div>
+        <div class="car-meta">
+          <div class="car-price">$٤٢٠,٠٠٠</div>
+          <div class="car-specs">
+            <div class="car-spec"><strong>600 hp</strong>هێز</div>
+            <div class="car-spec"><strong>4.6 چ</strong>0-100</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="car-card" onclick="alert('زانیاری Lamborghini Urus')">
+      <div class="car-img">
+        <svg viewBox="0 0 400 240" class="car-svg" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="fg3" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#1A1500"/><stop offset="100%" style="stop-color:#0A0800"/></linearGradient></defs>
+          <ellipse cx="200" cy="225" rx="175" ry="16" fill="url(#glowGrad)" opacity="0.4"/>
+          <path d="M25,185 L25,155 Q30,140 50,132 L130,105 Q175,72 225,65 L285,62 Q340,62 365,78 L390,100 Q395,115 395,140 L395,185 Z" fill="url(#fg3)"/>
+          <path d="M140,105 Q188,60 240,52 L290,50 Q345,50 372,72 L388,98 L140,98 Z" fill="#131000"/>
+          <path d="M190,54 Q235,40 290,42 L372,70 L340,96 L162,96 Z" fill="rgba(255,220,50,0.04)" stroke="rgba(201,168,76,0.25)" stroke-width="0.8"/>
+          <path d="M35,168 L388,168" stroke="url(#goldAccent)" stroke-width="2.5" opacity="0.65"/>
+          <circle cx="330" cy="202" r="32" fill="#0D0D0D" stroke="#1E1E1E" stroke-width="2"/>
+          <circle cx="330" cy="202" r="14" fill="#141200" stroke="#C9A84C" stroke-width="1"/>
+          <line x1="330" y1="180" x2="330" y2="224" stroke="#C9A84C" stroke-width="1" opacity="0.9"/>
+          <line x1="308" y1="202" x2="352" y2="202" stroke="#C9A84C" stroke-width="1" opacity="0.9"/>
+          <circle cx="85" cy="202" r="32" fill="#0D0D0D" stroke="#1E1E1E" stroke-width="2"/>
+          <circle cx="85" cy="202" r="14" fill="#141200" stroke="#C9A84C" stroke-width="1"/>
+          <line x1="85" y1="180" x2="85" y2="224" stroke="#C9A84C" stroke-width="1" opacity="0.9"/>
+          <line x1="63" y1="202" x2="107" y2="202" stroke="#C9A84C" stroke-width="1" opacity="0.9"/>
+        </svg>
+        <div class="car-glow"></div>
+      </div>
+      <div class="car-info">
+        <div class="car-brand">Lamborghini — ئیتالیا</div>
+        <div class="car-name">Urus Performante</div>
+        <div class="car-meta">
+          <div class="car-price">$٢٦٠,٠٠٠</div>
+          <div class="car-specs">
+            <div class="car-spec"><strong>657 hp</strong>هێز</div>
+            <div class="car-spec"><strong>3.3 چ</strong>0-100</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section class="experience" id="experience">
+  <div class="exp-visual reveal">
+    <div class="exp-frame">
+      <div class="exp-inner-frame"></div>
+      <svg viewBox="0 0 300 380" xmlns="http://www.w3.org/2000/svg" style="width:75%;position:relative;">
+        <defs>
+          <linearGradient id="intGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#1A1500"/><stop offset="100%" style="stop-color:#080600"/>
+          </linearGradient>
+          <radialGradient id="dashGlow" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" style="stop-color:#C9A84C;stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:#C9A84C;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <!-- Interior frame -->
+        <rect x="10" y="10" width="280" height="360" rx="4" fill="url(#intGrad)"/>
+        <rect x="10" y="10" width="280" height="360" rx="4" fill="url(#dashGlow)"/>
+        <!-- Steering wheel -->
+        <circle cx="150" cy="260" r="62" fill="none" stroke="#2A2000" stroke-width="18"/>
+        <circle cx="150" cy="260" r="62" fill="none" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+        <circle cx="150" cy="260" r="18" fill="#C9A84C" opacity="0.8"/>
+        <line x1="150" y1="200" x2="150" y2="242" stroke="#C9A84C" stroke-width="3" opacity="0.7"/>
+        <line x1="91" y1="260" x2="133" y2="260" stroke="#C9A84C" stroke-width="3" opacity="0.7"/>
+        <line x1="167" y1="260" x2="209" y2="260" stroke="#C9A84C" stroke-width="3" opacity="0.7"/>
+        <!-- Dashboard -->
+        <rect x="20" y="80" width="260" height="120" rx="8" fill="#0F0C00" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+        <!-- Gauge left -->
+        <circle cx="90" cy="135" r="38" fill="none" stroke="#1E1800" stroke-width="8"/>
+        <circle cx="90" cy="135" r="38" fill="none" stroke="#C9A84C" stroke-width="1" opacity="0.4"/>
+        <path d="M62,148 A38,38 0 1,1 118,148" fill="none" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <line x1="90" y1="135" x2="110" y2="108" stroke="#E2C97E" stroke-width="2" stroke-linecap="round"/>
+        <text x="90" y="162" text-anchor="middle" fill="#C9A84C" font-size="8" font-family="Inter">RPM</text>
+        <!-- Gauge right -->
+        <circle cx="210" cy="135" r="38" fill="none" stroke="#1E1800" stroke-width="8"/>
+        <circle cx="210" cy="135" r="38" fill="none" stroke="#C9A84C" stroke-width="1" opacity="0.4"/>
+        <path d="M182,148 A38,38 0 0,1 238,102" fill="none" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+        <line x1="210" y1="135" x2="195" y2="108" stroke="#E2C97E" stroke-width="2" stroke-linecap="round"/>
+        <text x="210" y="162" text-anchor="middle" fill="#C9A84C" font-size="8" font-family="Inter">KM/H</text>
+        <!-- Speed readout -->
+        <text x="150" y="128" text-anchor="middle" fill="#E2C97E" font-size="22" font-family="Playfair Display" font-weight="700">280</text>
+        <text x="150" y="142" text-anchor="middle" fill="#8A6D28" font-size="7" font-family="Inter" letter-spacing="2">KM/H</text>
+      </svg>
+    </div>
+    <div class="exp-badge">
+      <div class="badge-num">١٥</div>
+      <div class="badge-txt">ساڵ<br>تەجربە</div>
+    </div>
+  </div>
+  <div class="exp-content reveal">
+    <div class="section-eyebrow">تەجربەی AURUM</div>
+    <h2 class="section-title">ئێمە ئۆتۆمبێل<br>نافرۆشین</h2>
+    <p class="exp-quote">ئیفادەی کەسایەتیت دەفرۆشین</p>
+    <p class="exp-body">
+      لە AURUM، هەر ئۆتۆمبێلێک چیرۆکێکی تایبەتی هەیە. تیمی پسپۆڕەکانمان دەستت دەگرن لە پێشتر لە هەموو هەنگاوێک تا دوای کڕینەوە — ئیمینان بە جۆریت بدەین.
+    </p>
+    <div class="exp-features">
+      <div class="exp-feat">
+        <div class="feat-icon">✦</div>
+        <div>
+          <div class="feat-title">شارەزایی تایبەت</div>
+          <div class="feat-desc">هەر کڕیارێک پسپۆڕێکی تایبەتی هەیە کە تەنها بۆی کار دەکات</div>
+        </div>
+      </div>
+      <div class="exp-feat">
+        <div class="feat-icon">◈</div>
+        <div>
+          <div class="feat-title">مێژووی تەواوی ئۆتۆمبێل</div>
+          <div class="feat-desc">ڕاپۆرتی تەواو لە مێژوو، خزمەتگوزاری، و هەموو تەکنیکەکان</div>
+        </div>
+      </div>
+      <div class="exp-feat">
+        <div class="feat-icon">◉</div>
+        <div>
+          <div class="feat-title">گەڕانی تایبەت</div>
+          <div class="feat-desc">ئۆتۆمبێلەکە بۆ ماڵت دێنین بۆ تەکنیکی ٢٤ کاتژمێر</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">پرۆسەی کڕین</div>
+      <h2 class="section-title">سادە. ڕوون. لوکس.</h2>
+    </div>
+  </div>
+  <div class="steps reveal">
+    <div class="step">
+      <span class="step-roman">I</span>
+      <div class="step-title">هەڵبژاردن</div>
+      <p class="step-desc">لە کۆلێکشنمانەوە ئۆتۆمبێلی دڵخوازت هەڵبژێرە، یاخود پسپۆڕەکانمان بگرە.</p>
+    </div>
+    <div class="step">
+      <span class="step-roman">II</span>
+      <div class="step-title">پشکنین</div>
+      <p class="step-desc">تێکنیکدانی تەواو، تاقیکردنەوەی شۆفێرانە، و چاودێری پسپۆڕ.</p>
+    </div>
+    <div class="step">
+      <span class="step-roman">III</span>
+      <div class="step-title">دامەزراندن</div>
+      <p class="step-desc">پرۆسەی ئابووری سادە بەبێ ناسرا، فایناسمەنت، یان پارەی ڕاستەوخۆ.</p>
+    </div>
+    <div class="step">
+      <span class="step-roman">IV</span>
+      <div class="step-title">گەیاندن</div>
+      <p class="step-desc">ئۆتۆمبێلەکە بە شێوەیەکی تایبەت بۆ دەرگاکەت دێتەوە.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header reveal">
+    <div>
+      <div class="section-eyebrow">ئەوانەی باوەڕیانمان کرد</div>
+      <h2 class="section-title">دەنگی کڕیارانمان</h2>
+    </div>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">تیمی AURUM تجربەیەکی بێبەرانبەرم پێشکەش کرد. Ferrari SF90ەکەم لە ژمارەی ٣ ساعاتدا تەواو بوو.</p>
+      <div class="testi-author">احمد الكريم</div>
+      <div class="testi-role">کڕیاری کەسی — دوبەی</div>
+    </div>
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">پسپۆڕەکان هەموو پرسیارەکانم وەڵامیاندا، قه‌تى حس ناکەم کەسێکم دا بفرۆشێت.</p>
+      <div class="testi-author">Aarav Mehta</div>
+      <div class="testi-role">بازرگانی — لۆندەن</div>
+    </div>
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">Rolls-Royce Ghost Badgeکەم بۆ ماڵم هات. جوانترین رۆژی ژیانمە.</p>
+      <div class="testi-author">سارا النعيمي</div>
+      <div class="testi-role">دەرمانناسی — ئەبوظەبی</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-bg-text">AURUM</div>
+  <div class="section-eyebrow" style="position:relative;margin-bottom:1rem;">دەستپێکردن</div>
+  <h2 class="cta-title reveal">ئیمرۆ <em>بژیوە</em><br>بە ستایلی خۆت</h2>
+  <p class="cta-sub reveal">ئیمەیلت بنووسە، پسپۆڕێکمان پەیوەندیت پێوە دەکات</p>
+  <div class="cta-form reveal">
+    <input class="cta-input" type="email" placeholder="ئیمەیلەکەت بنووسە...">
+    <button class="cta-btn" onclick="alert('سوپاس! بەم زووانە پەیوەندیت پێوە دەکەین.')">بنێرە</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a class="logo" href="#">AURUM <span>Motors</span></a>
+    <p class="footer-tagline">پێشانگای ئۆتۆمبێلی لوکس لە ناوچەی کوردستان — کەمالی لە ڕوی دیزاین و جۆر.</p>
+  </div>
+  <div>
+    <div class="footer-heading">ئۆتۆمبێلەکان</div>
+    <ul class="footer-links">
+      <li><a href="#">سپۆرت</a></li>
+      <li><a href="#">لوکس</a></li>
+      <li><a href="#">SUV</a></li>
+      <li><a href="#">کلاسیک</a></li>
+      <li><a href="#">ئەلێکتریکی</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-heading">خزمەتگوزاری</div>
+    <ul class="footer-links">
+      <li><a href="#">گەڕانی تایبەت</a></li>
+      <li><a href="#">فایناسمەنت</a></li>
+      <li><a href="#">بیمە</a></li>
+      <li><a href="#">خزمەتگوزاری پاش کڕین</a></li>
+    </ul>
+  </div>
+  <div>
+    <div class="footer-heading">پەیوەندی</div>
+    <ul class="footer-links">
+      <li><a href="#">+964 750 000 0000</a></li>
+      <li><a href="#">info@aurum-motors.krd</a></li>
+      <li><a href="#">هەولێر، کوردستان</a></li>
+      <li><a href="#">دووشەممە–ئینجە ٩ - ٦</a></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <span>© ٢٠٢٤ AURUM Motors. هەموو مافەکان پارێزراون.</span>
+    <span>دیزاینکراو بە ئەلەکتریکی زێڕین ✦</span>
+  </div>
+</footer>
+
+<script>
+// ─── PARTICLE CANVAS ───
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width  = canvas.offsetWidth;
+  H = canvas.height = canvas.offsetHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function makeParticle() {
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.4 + 0.3,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: -(Math.random() * 0.4 + 0.1),
+    alpha: Math.random() * 0.5 + 0.1,
+    life: 1,
+    decay: Math.random() * 0.002 + 0.001
+  };
+}
+
+for (let i = 0; i < 90; i++) particles.push(makeParticle());
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach((p, i) => {
+    p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(201,168,76,${p.alpha * p.life})`;
+    ctx.fill();
+    if (p.life <= 0) particles[i] = makeParticle();
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ─── SCROLL REVEAL ───
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }});
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// ─── NAV scroll blur ───
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').style.background =
+    window.scrollY > 60
+      ? 'rgba(9,9,9,0.97)'
+      : 'linear-gradient(to bottom,rgba(9,9,9,0.95),transparent)';
+});
+</script>
+</body>
+</html>
